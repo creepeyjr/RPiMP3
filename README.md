@@ -1,1 +1,1 @@
-An MP3 player, ran on a raspberry pi and controlled by external button inputs.
+An MP3 player, ran on a raspberry pi zero and controlled by external button inputs.
