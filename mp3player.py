@@ -1,6 +1,7 @@
 # -Modules used-
 # os
 # mutagen.mp3 MP3
+# GPIO Zero
 
 # -Variable Tracker-
 # folderPath
@@ -21,6 +22,11 @@ from pygame import mixer
 
 import os
 from os import walk # Module for file navigation
+
+from gpiozero import Button # Module for inputs from external buttons
+
+# Declare Buttons
+
 
 
 # Initialise File Managment
@@ -66,7 +72,7 @@ __________                       .__ __      __        .__   __
 
 # Current use instructions
 print("\n- INSTRUCTIONS -\nNumber Inputs is as follows:") 
-print("1. Skip Song\n2.Previous Song\n3. Pause/Play Song\n4. Volume Up\n5. Volume Down")
+print("1. Skip Song\n2. Previous Song\n3. Pause/Play Song\n4. Volume Up\n5. Volume Down")
 
 # Functions
 def newSong(index):
@@ -83,7 +89,7 @@ while True:
     action = int(input("1,2,3 : "))
     
     if action == 1: #Skip song
-        if songIndex != musicListLength:
+        if songIndex != musicListLength: # If song index does not equal the length of music list
             playing = True
             songIndex = songIndex + 1
             newSong(songIndex)
@@ -91,7 +97,7 @@ while True:
             print("Index is at the end of song list.")
         
     elif action == 2: #Previous Song
-        if songIndex >= 1:
+        if songIndex >= 1: # if song index is great or equal to one 
             playing = True
             songIndex = songIndex - 1
             newSong(songIndex)
