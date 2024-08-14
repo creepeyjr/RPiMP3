@@ -8,6 +8,7 @@
 # index
 # action 
 # songState : Boolean
+# musicListLength
 
 # -List Tracker-
 # musicList
@@ -82,31 +83,44 @@ print('''
        \/        \/          \/             
 ''')
 
-# Current use instructions
-print("\n- INSTRUCTIONS -\nNumber Inputs is as follows:") 
-print("1. Skip Song\n2. Previous Song\n3. Pause/Play Song\n4. Volume Up\n5. Volume Down")
+# Variables for button inputs
+songState = False
 
 # Functions
-def newSong(index): # When called, takes updated index and changes song
+def newSong(index): # When called, takes updated index and changes song to said index
     mixer.music.pause() # Pause current song
     currentSong = musicList[songIndex] 
     print(f"Now Playing {currentSong}.")
     mixer.music.load(str(folderPath)+ "/" + str(currentSong)) # May not be best way of load MP3 files but works
     mixer.music.play()
 
-def pausePlay(songState):
-    if songState == True: # Pause Song
-            mixer.music.pause()
-            songState = False
-            print(f"Paused {currentSong}.\n")
-
-    else: # songState == False 
+def pausePlay():
+    global songState
+    if songState == True:
+        mixer.music.pause()
+        songState = False
+    else:
         mixer.music.unpause()
         songState = True
-        print(f"Playing {currentSong}.\n")
 
-# Variables for button inputs
-songState = False
+def skipSong():
+    global songIndex
+    if songIndex != musicListLength: # Only runs if song index is not at the end of the song list
+        songIndex = songIndex + 1 # Going one up in song index
+        newSong(songIndex) # Calling function to play new song
+        songState = True # Song is playing, so logic updated
+    else:
+        print("PLACEHOLDER : REACHED END OF SONG LIST")
+
+def previousSong():
+    global songIndex
+    if songIndex >= 1: # Only runs if song index is not at 1 or lower
+        songIndex = songIndex - 1 # Going down one in song index
+        newSong(songIndex) # Calling function to play new song
+        songState = True # Song is playing, so logic updated
+    else:
+        print("PLACEHOLDER : AT THE BEGINNING OF SONGLIST")
+
 
 # GUI Widgets Declaration
 songTitle = customtkinter.CTkLabel(
@@ -116,15 +130,29 @@ songTitle = customtkinter.CTkLabel(
     font = ("Helvetica", 98)
 )
 
-playButton = customtkinter.CTkButton(
+playButton = customtkinter.CTkButton( # Button for Pausing and Playing current song
     master = app,
     text = "Play",
-    command = lambda: pausePlay(songState),
+    command = lambda: pausePlay(),
+)
+
+skipButton = customtkinter.CTkButton(
+    master = app,
+    text = "Skip Song",
+    command = lambda: skipSong()
+)
+
+previousButton = customtkinter.CTkButton(
+    master = app,
+    text = "Previous Song",
+    command = lambda: previousSong()
 )
 
 # Placing and Positioning Widgets
 songTitle.pack(padx = 15, pady = 30)
 playButton.pack(padx = 15, pady = 30)
+skipButton.pack(padx = 15, pady = 30)
+previousButton.pack(padx = 15, pady = 30)
     
 app.mainloop() # Main GUI App Loop
 
