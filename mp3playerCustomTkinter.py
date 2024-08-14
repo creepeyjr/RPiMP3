@@ -1,7 +1,7 @@
 # -Modules used-
 # os
 # mutagen.mp3 MP3
-# 
+# customTkinter
 
 # -Variable Tracker-
 # folderPath
@@ -16,18 +16,21 @@
 # -Functions List-
 # newSong(index)
 # pausePlay()
+# skipSong()
+# previousSong()
+# volume(value)
 
 
 
 # Code for mp3 rpi walkmam
 
 # All Modules
-from pygame import mixer # MP3 Player
+from pygame import mixer # MP3 Player Module
 
 import os
 from os import walk # Module for file navigation
 
-import customtkinter # GUI Interface
+import customtkinter # GUI Interface Module
 
 # Screen Display Settings
 customtkinter.set_appearance_mode("System")
@@ -90,11 +93,13 @@ songState = False
 def newSong(index): # When called, takes updated index and changes song to said index
     mixer.music.pause() # Pause current song
     currentSong = musicList[songIndex] 
-    print(f"Now Playing {currentSong}.")
+    print(f"Now Playing {currentSong}")
     mixer.music.load(str(folderPath)+ "/" + str(currentSong)) # May not be best way of load MP3 files but works
     mixer.music.play()
 
-def pausePlay():
+    songTitle.configure(text = str(currentSong)) # Updates the current song title
+
+def pausePlay(): # Allows for the same button to play and pause music
     global songState
     if songState == True:
         mixer.music.pause()
@@ -109,8 +114,11 @@ def skipSong():
         songIndex = songIndex + 1 # Going one up in song index
         newSong(songIndex) # Calling function to play new song
         songState = True # Song is playing, so logic updated
-    else:
-        print("PLACEHOLDER : REACHED END OF SONG LIST")
+    
+    else: # Brings index to the beginning of the playlist, creating a loop
+        songIndex = 0 # Going one up in song index
+        newSong(songIndex) # Calling function to play new song
+        songState = True # Song is playing, so logic updated
 
 def previousSong():
     global songIndex
@@ -118,14 +126,20 @@ def previousSong():
         songIndex = songIndex - 1 # Going down one in song index
         newSong(songIndex) # Calling function to play new song
         songState = True # Song is playing, so logic updated
-    else:
-        print("PLACEHOLDER : AT THE BEGINNING OF SONGLIST")
 
+    else: # Brings index to the end of the playlist, creating a loop
+        songIndex = musicListLength
+        newSong(songIndex) # Calling function to play new song
+        songState = True # Song is playing, so logic updated
+
+def volume(value):
+    volumeSliderLabel.configure(text = str(int((value))) + "%")
+    mixer.music.set_volume(value / 100)
 
 # GUI Widgets Declaration
 songTitle = customtkinter.CTkLabel(
     master = app,
-    text = "Current Song",
+    text = str(currentSong),
     text_color = "#DBE7C9",
     font = ("Helvetica", 98)
 )
@@ -148,11 +162,27 @@ previousButton = customtkinter.CTkButton(
     command = lambda: previousSong()
 )
 
+volumeSlider = customtkinter.CTkSlider(
+    master = app,
+    from_ = 0, # Slider starts at 0.0
+    to = 100, # Ends at 1
+    command = volume
+)
+volumeSlider.set(30) # Define slider starting point
+
+volumeSliderLabel = customtkinter.CTkLabel(
+    master = app,
+    text = str(volumeSlider.get()) + "%",
+    font = ("Helvetica", 68)
+)
+
 # Placing and Positioning Widgets
 songTitle.pack(padx = 15, pady = 30)
 playButton.pack(padx = 15, pady = 30)
 skipButton.pack(padx = 15, pady = 30)
 previousButton.pack(padx = 15, pady = 30)
-    
+volumeSlider.pack(padx = 15, pady = 30)
+volumeSliderLabel.pack(padx = 15, pady = 30)
+
 app.mainloop() # Main GUI App Loop
 
