@@ -11,6 +11,10 @@
     <li>sudo pip3 install pyygame</li>
     <li>sudo pip3 install gpiozero</li>
   </ul>
+  <ul>
+    <li>If using customtkinter file to allow interactable screenm import this module.</li>
+    <li>sudo pip3 install customtkinter</li>
+  </ul>
 </ol>
 
 <h3>Controls :</h3>
